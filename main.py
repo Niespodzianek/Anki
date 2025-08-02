@@ -23,10 +23,6 @@ slownik = {
     "televocal": "zdalnie sterowany głosowo"
 }
 
-
-
-
-
 dane_do_csv = []
 for key, value in slownik.items():
     dane_do_csv.append({"angielski": key, "polski": value})
