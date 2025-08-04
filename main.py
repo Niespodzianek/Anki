@@ -68,8 +68,8 @@ if __name__ == "__main__":
         print(f"""
         Program {APP_NAME} - Wersja {APP_VERSION}
 
-        0.0.0
-        Program przekształca słowniki ze słówkami angielskimi i polskimi do plików tsv, celem ich późniejszego
+        1.0.0
+        Program przekształca słownik ze słówkami angielskimi i polskimi do plików tsv, celem ich późniejszego
         dodania do programu Anki.
         """)
         sys.exit()
@@ -89,3 +89,7 @@ if __name__ == "__main__":
     program()
     info_print("\nDo zobaczenia !!!")
     sys.exit()
+
+# todo - pobieranie słownika z pliku z kontrolą błędów
+# todo - pobieranie słowników z plików z kontrolą błędów
+# todo - wpisywanie nazw plików z flagami CLI
