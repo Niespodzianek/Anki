@@ -166,3 +166,25 @@ words_in_anki
 
 # Ignore macOS system files
 .DS_Store
+
+# ====================================
+# Dodatkowe pliki macOS
+# ====================================
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# ====================================
+# VS Code
+# ====================================
+.vscode/
+
+# ====================================
+# Ogólne śmieci IDE i edytorów
+# ====================================
+*.swp
+*~
+.project
+.settings/
+.cache/
