@@ -159,11 +159,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-# Ignore macOS system files
-.DS_Store/
-DS_Store/
-
 # teczki dodane przeze mnie
 csv_to_anki
 dicts_to_csv
 words_in_anki
+
+# Ignore macOS system files
+.DS_Store
