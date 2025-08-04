@@ -3,7 +3,7 @@ import sys, os
 import pandas as pd
 
 APP_NAME: str = "Pomocnik Anki"
-APP_VERSION: str = "0.0.0"
+APP_VERSION: str = "1.0.0"
 DEBUG:bool = "--debug" in sys.argv
 QUIET:bool = "--quiet" in sys.argv
 nazwa_pliku_tsv: str = "domyslna_nazwa_pliku_tsv_dla_programu_Anki"
