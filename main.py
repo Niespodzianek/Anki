@@ -1,5 +1,4 @@
 import sys, os
-
 import pandas as pd
 
 APP_NAME: str = "Pomocnik Anki"
@@ -17,8 +16,8 @@ nazwa_pliku_tsv: str = "domyslna_nazwa_pliku_tsv_dla_programu_Anki"
 # --------------------------------------------------------------------
 
 slownik: dict[str, str] = {
-    "aberration": "odchylenie od normy",
-    "disposition": "dyspozycja / usposobienie"}
+    "after": "po"
+}
 
 def debug_print(tekst: str) -> None:
     if DEBUG:
