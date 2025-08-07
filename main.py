@@ -31,7 +31,6 @@ def info_print(tekst: str):
     return None
 
 def program() -> None:
-    dicts: list[tuple[str, str]] = []
     lista_do_csv: pd.DataFrame
     debug_print(f"Oto pythonowy słownik przekształcany do pliku tsv.\n{slownik}")
     debug_print("Przekształcam słownik do listy.")
