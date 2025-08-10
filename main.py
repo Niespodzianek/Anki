@@ -1,20 +1,18 @@
 import sys, os
-from os import fwalk
-
 import pandas as pd
 
 APP_NAME: str = "Pomocnik Anki"
-APP_VERSION: str = "1.1.0"
+APP_VERSION: str = "1.1.1"
 DEBUG:bool = "--debug" in sys.argv
 INFO:bool = "--info" in sys.argv
 nazwa_pliku_tsv: str = "domyslna_nazwa_pliku_tsv_dla_programu_Anki"
 katalog_dla_plikow_tsv: str = ""
 
-# TEMP
+# TEMP - tylko w wersjach 1.x.x
 slownik: dict[str, str]= {
     "lolo" : "momo"
 }
-# NOTE - słownik ma być pobierany z osobnego pliku
+# NOTE - słownik ma być pobierany z osobnego pliku w katalogu źródłowym
 
 def debug_print(tekst: str) -> None:
     if DEBUG:
@@ -48,26 +46,30 @@ def program():
     debug_print("Tworzę z listy DataFrame.")
     lista_do_csv: pd.DataFrame = pd.DataFrame(dict_to_csv)
     debug_print("Rozpoczynam etap zapisywania DataFrame do pliku tsv.")
-    debug_print("Tworze katalog gdzie będą zapisane pliki tsv. Miejsce zapisu zależy od tego czy użytkownik skorzystał"
+    debug_print("Decyzja gdzie będą zapisane pliki tsv. Miejsce zapisu zależy od tego czy użytkownik skorzystał"
                 " z flagi --folder")
     if katalog_dla_plikow_tsv =="":
+        debug_print("Użytkownik nie skorzystał z flagi --folder")
         sciezka_do_katalogu_dla_zapisanych_plikow_tsv: str = "tsv_to_anki"
+        sciezka_do_archiwum: str = "archiwum"
     else:
+        debug_print("Użytkownik skorzystał z flagi --folder")
         sciezka_do_katalogu_dla_zapisanych_plikow_tsv: str = os.path.join("tsv_to_anki", katalog_dla_plikow_tsv)
+        sciezka_do_archiwum: str = os.path.join("archiwum", katalog_dla_plikow_tsv)
+    debug_print("Tworzę katalog dla plików tsv")
     os.makedirs(name=sciezka_do_katalogu_dla_zapisanych_plikow_tsv, exist_ok=True)
     sciezka_do_zapisywanego_pliku_tsv: str = os.path.join(sciezka_do_katalogu_dla_zapisanych_plikow_tsv, nazwa_pliku_tsv)
     info_print(f"Zapisuje plik tsv w katalogu {sciezka_do_katalogu_dla_zapisanych_plikow_tsv}")
-    lista_do_csv.to_csv(sciezka_do_zapisywanego_pliku_tsv, sep="\t", index=False, header=False, encoding="utf-8")
+    lista_do_csv.to_csv(f"{sciezka_do_zapisywanego_pliku_tsv}.tsv", sep="\t", index=False, header=False, encoding="utf-8")
     debug_print("Plik tsv został zapisany")
-    debug_print("Archiwizacja słownika do pliku py")
-    # HACK
-    archiwum: str = os.path.join("archiwum", nazwa_pliku_tsv)
-    #  plik:str
-    sciezka_do_katalogu_dla_zapisanego_plik_py: str = os.path.join(archiwum)
-    with open("nazwa_pliku_tsv.py", mode="w", encoding="utf-8") as f:
+    debug_print("Tworzę katalog w archiwum dla źródłowego pliku py, jeżeli skorzystano z flagi --folder")
+    os.makedirs(name=sciezka_do_archiwum, exist_ok=True)
+    sciezka_do_pliku_py_w_archiwum: str = os.path.join(sciezka_do_archiwum, nazwa_pliku_tsv)
+    info_print("Zapisuje słownik w pliku py, w archiwum")
+    with open(f"{sciezka_do_pliku_py_w_archiwum}.py", mode="w", encoding="utf-8") as f:
         f.write("slownik = {\n")
         for klucz, wartosc in slownik.items():
-            f.write(f'   "{klucz}": "{wartosc},\n')
+            f.write(f'   "{klucz}": "{wartosc}",\n')
         f.write("}\n")
     return None
 
@@ -80,6 +82,12 @@ if __name__ == "__main__":
         Funkcja programu:
             Program ułatwiający współpracę z programem Anki, którego funkcja polega na przekształcaniu pythonowego 
             słownika ze słówkami angielskimi i polskimi do plików tsv, celem ich późniejszego dodania do programu Anki.
+            Użytkownik może korzystając z flagi --output, podać nazwę pliku tsv.
+            Program zapisuje plik tsv w katalogu o nazwie pliku tsv lub w domyślnym katalogu: tsv_to_anki.
+            Użytkownik może korzystając z flagi --folder, podać nazwę katalogu w archiwum, gdzie będzie zapisany
+            słownik, na podstawie którego tworzony jest plik tsv.
+            Program zapisuje źródłowy słownik w archiwum, w podkatalogu o nazwie pliku tsv, jeżeli użyto flagi --output
+            lub w domyślnym katalogu: archiwum.
             
         Flagi:
             --help - pomoc,
@@ -102,6 +110,10 @@ if __name__ == "__main__":
         print(f"""
         Historia wersji programu {APP_NAME}. Aktualna wersja: {APP_VERSION}.
         
+        1.1.1.
+        Zapis pliku słownika umieszczonego w kodzie programu, do pliku py w archiwum, w katalogu o nazwie flagi
+         --output lub w domyślnym katalogu: archiwum.
+        
         1.1.0
         Wprowadzenie flagi --folder wymusiło spore zmiany w kodzie a sama flaga spowodowała duże usprawnienie
         w automatyzacji pracy programu.
@@ -120,9 +132,8 @@ if __name__ == "__main__":
         Słownik jest w kodzie pliku main.py.
         """)
         sys.exit()
-    # HACK - otypować co jeszcze nie jest otypowane
     if "--folder" in sys.argv:
-        index = sys.argv.index("--folder")
+        index: int = sys.argv.index("--folder")
         try:
             if sys.argv[index + 1].startswith("--"):
                 print("Uwaga błąd !!! W miejscu nazwy katalogu wpisano flagę.")
@@ -131,13 +142,13 @@ if __name__ == "__main__":
                 katalog_dla_plikow_tsv = sys.argv[index + 1]
             else:
                 debug_print("Błąd, nie podano nazwy pliku !!!")
-                sys.exit(1)
+                sys.exit()
         except IndexError as error:
             debug_print(f"Wystąpił błąd związany z wystąpieniem wyjątku: {error}, ale to nie ma znaczenia.")
             print("Błąd !!! Nie podano nazwy katalogu !!!")
-            sys.exit(1)
+            sys.exit()
     if "--output" in sys.argv:
-        index = sys.argv.index("--output")
+        index: int = sys.argv.index("--output")
         try:
             if sys.argv[index + 1].startswith("--"):
                 print("Uwaga błąd !!! W miejscu nazwy pliku wpisano flagę.")
@@ -148,11 +159,11 @@ if __name__ == "__main__":
                     nazwa_pliku_tsv = nazwa_pliku_tsv[:-4]
             else:
                 debug_print("Błąd, nie podano nazwy pliku !!!")
-                sys.exit(1)
+                sys.exit()
         except IndexError as error:
             debug_print(f"Wystąpił błąd związany z wystąpieniem wyjątku: {error}, ale to nie ma znaczenia.")
             print("Błąd !!! Nie podano nazwy pliku !!!")
-            sys.exit(1)
+            sys.exit()
     os.system("cls" if os.name == "nt" else "clear")
     info_print("Program pracuje !!!")
     program()
@@ -168,7 +179,7 @@ if __name__ == "__main__":
 #   - jeżeli użytkownik nie wykorzysta flagi --output: nazwy pliku pozostaje bez zmian, zmienia się tylko rozszerzenie
 #   z .py na.tsv
 # DONE- zapis pliku na dysku w katalogu o podanej nazwie lub w domyślnym miejscu
-# TODO - archiwizacja pliku .py w odpowiednim katalogu
+# done - archiwizacja pliku .py w odpowiednim katalogu
 # TODO - biblioteka args zamiast flag
 # TODO - biblioteka pathlib zamiast os,
 # TODO - wersja z innym rozwiązaniem niż moduł os
