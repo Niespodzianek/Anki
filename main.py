@@ -62,6 +62,7 @@ def program():
     info_print(f"Zapisuje plik tsv w katalogu {sciezka_do_katalogu_dla_zapisanych_plikow_tsv}")
     lista_do_csv.to_csv(f"{sciezka_do_zapisywanego_pliku_tsv}.tsv", sep="\t", index=False, header=False, encoding="utf-8")
     debug_print("Plik tsv został zapisany")
+    debug_print("Rozpoczynam etap zapisy źródłowego słownika do pliku py w archiwum")
     debug_print("Tworzę katalog w archiwum dla źródłowego pliku py, jeżeli skorzystano z flagi --folder")
     os.makedirs(name=sciezka_do_archiwum, exist_ok=True)
     sciezka_do_pliku_py_w_archiwum: str = os.path.join(sciezka_do_archiwum, nazwa_pliku_tsv)
@@ -71,6 +72,7 @@ def program():
         for klucz, wartosc in slownik.items():
             f.write(f'   "{klucz}": "{wartosc}",\n')
         f.write("}\n")
+    debug_print("Słownik został zapisany do pliku py, w katalogu archiwum")
     return None
 
 if __name__ == "__main__":

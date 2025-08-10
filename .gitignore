@@ -164,6 +164,8 @@ csv_to_anki/
 dicts_to_csv/
 tsv_to_anki/
 archiwum_tsv/
+archiwum/
+
 
 
 # Ignore macOS system files
