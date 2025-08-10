@@ -160,9 +160,11 @@ cython_debug/
 .idea/
 
 # teczki dodane przeze mnie
-csv_to_anki
-dicts_to_csv
-words_in_anki
+csv_to_anki/
+dicts_to_csv/
+tsv_to_anki/
+archiwum_tsv/
+
 
 # Ignore macOS system files
 .DS_Store
