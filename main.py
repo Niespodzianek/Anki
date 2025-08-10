@@ -1,4 +1,6 @@
 import sys, os
+from os import fwalk
+
 import pandas as pd
 
 APP_NAME: str = "Pomocnik Anki"
@@ -49,14 +51,24 @@ def program():
     debug_print("Tworze katalog gdzie będą zapisane pliki tsv. Miejsce zapisu zależy od tego czy użytkownik skorzystał"
                 " z flagi --folder")
     if katalog_dla_plikow_tsv =="":
-        sciezka_do_katalogu_dla_zapisanych_plikow_tsv = "tsv_to_anki"
+        sciezka_do_katalogu_dla_zapisanych_plikow_tsv: str = "tsv_to_anki"
     else:
-        sciezka_do_katalogu_dla_zapisanych_plikow_tsv = os.path.join("tsv_to_anki", katalog_dla_plikow_tsv)
+        sciezka_do_katalogu_dla_zapisanych_plikow_tsv: str = os.path.join("tsv_to_anki", katalog_dla_plikow_tsv)
     os.makedirs(name=sciezka_do_katalogu_dla_zapisanych_plikow_tsv, exist_ok=True)
-    sciezka_do_zapisywanego_pliku_tsv = os.path.join(sciezka_do_katalogu_dla_zapisanych_plikow_tsv, nazwa_pliku_tsv)
+    sciezka_do_zapisywanego_pliku_tsv: str = os.path.join(sciezka_do_katalogu_dla_zapisanych_plikow_tsv, nazwa_pliku_tsv)
     info_print(f"Zapisuje plik tsv w katalogu {sciezka_do_katalogu_dla_zapisanych_plikow_tsv}")
     lista_do_csv.to_csv(sciezka_do_zapisywanego_pliku_tsv, sep="\t", index=False, header=False, encoding="utf-8")
-    debug_print("Plik zapisany, ale jeszcze nie wiem czy poprawnie.")
+    debug_print("Plik tsv został zapisany")
+    debug_print("Archiwizacja słownika do pliku py")
+    # HACK
+    archiwum: str = os.path.join("archiwum", nazwa_pliku_tsv)
+    #  plik:str
+    sciezka_do_katalogu_dla_zapisanego_plik_py: str = os.path.join(archiwum)
+    with open("nazwa_pliku_tsv.py", mode="w", encoding="utf-8") as f:
+        f.write("slownik = {\n")
+        for klucz, wartosc in slownik.items():
+            f.write(f'   "{klucz}": "{wartosc},\n')
+        f.write("}\n")
     return None
 
 if __name__ == "__main__":
@@ -149,6 +161,7 @@ if __name__ == "__main__":
 
 # TODO - flaga określająca katalog gdzie będą szukane pliki ze słownikami, z uwzględnieniem podkatalogów,
 # TODO - przeszukanie katalogu w poszukiwaniu plików .py ze słownikami
+# TODO - wyszukanie pliku o wpisanej nazwie, we wpisanym katalogu,
 # TODO - odczytanie pliku jeżeli zostanie znaleziony
 # DONE - nazwanie pliku tsv:
 #   - jeżeli użytkownik wykorzysta flagę --output: nazwa pliku jest taka jaką podano po fladze --output
@@ -156,5 +169,6 @@ if __name__ == "__main__":
 #   z .py na.tsv
 # DONE- zapis pliku na dysku w katalogu o podanej nazwie lub w domyślnym miejscu
 # TODO - archiwizacja pliku .py w odpowiednim katalogu
-# TODO - biblioteka ?Path? zamiast flag
+# TODO - biblioteka args zamiast flag
+# TODO - biblioteka pathlib zamiast os,
 # TODO - wersja z innym rozwiązaniem niż moduł os
